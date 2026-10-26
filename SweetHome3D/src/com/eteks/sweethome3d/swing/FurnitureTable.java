@@ -751,8 +751,8 @@ public class FurnitureTable extends JTable implements View, Printable {
         }
       };
 
-    // Gather the columns to print: the ones displayed on screen,
-    // plus the Level column if it isn't displayed
+    // NEW: Collects the on-screen columns into a list (like the previous implementation), but ALSO adds in
+    // level column if it wasn't included in the on-screen columns
     List<TableColumn> sourceColumns = new ArrayList<TableColumn>();
     boolean levelColumnDisplayed = false;
     for (int i = 0, n = columnModel.getColumnCount(); i < n; i++) {
@@ -771,8 +771,6 @@ public class FurnitureTable extends JTable implements View, Printable {
       }
     }
 
-//    for (int columnIndex = 0, n = columnModel.getColumnCount(); columnIndex < n; columnIndex++) {
-//      final TableColumn tableColumn = columnModel.getColumn(columnIndex);
     for (final TableColumn tableColumn : sourceColumns) {
       // Create a printable column from existing table column
       TableColumn printableColumn = new TableColumn();
@@ -815,7 +813,6 @@ public class FurnitureTable extends JTable implements View, Printable {
     if (EventQueue.isDispatchThread()) {
       TableColumnModel oldColumnModel = getColumnModel();
       Color oldGridColor = getGridColor();
-//      int pageExists = printable.print(g, pageFormat, pageIndex);
       try { // NEW
         setColumnModel(printableColumnModel);
         if (OperatingSystem.isWindows()) {
@@ -826,13 +823,13 @@ public class FurnitureTable extends JTable implements View, Printable {
         }
         setGridColor(gridColor);
         Printable printable = getPrintable(PrintMode.FIT_WIDTH, null, null);
-        return printable.print(g, pageFormat, pageIndex); // NEW LINE
+        int pageExists = printable.print(g, pageFormat, pageIndex);
+        return pageExists;
       } finally {
         // Restore column model and grid color to their previous values,
         // even if printing throws
         setColumnModel(oldColumnModel);
         setGridColor(oldGridColor);
-        //      return pageExists; REMOVED
       }
     } else {
       // Print synchronously table in Event Dispatch Thread
