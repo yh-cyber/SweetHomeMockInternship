@@ -815,21 +815,8 @@ public class FurnitureTable extends JTable implements View, Printable {
     if (EventQueue.isDispatchThread()) {
       TableColumnModel oldColumnModel = getColumnModel();
       Color oldGridColor = getGridColor();
-//      setColumnModel(printableColumnModel);
-//      if (OperatingSystem.isWindows()) {
-//        // Add 3 pixels to columns to get a correct rendering
-//        updateTableColumnsWidth(3);
-//      } else {
-//        updateTableColumnsWidth(0);
-//      }
-//      setGridColor(gridColor);
-//      Printable printable = getPrintable(PrintMode.FIT_WIDTH, null, null);
 //      int pageExists = printable.print(g, pageFormat, pageIndex);
-//      // Restore column model and grid color to their previous values
-//      setColumnModel(oldColumnModel);
-//      setGridColor(oldGridColor);
-//      return pageExists;
-      try {
+      try { // NEW
         setColumnModel(printableColumnModel);
         if (OperatingSystem.isWindows()) {
           // Add 3 pixels to columns to get a correct rendering
@@ -839,12 +826,13 @@ public class FurnitureTable extends JTable implements View, Printable {
         }
         setGridColor(gridColor);
         Printable printable = getPrintable(PrintMode.FIT_WIDTH, null, null);
-        return printable.print(g, pageFormat, pageIndex);
+        return printable.print(g, pageFormat, pageIndex); // NEW LINE
       } finally {
         // Restore column model and grid color to their previous values,
         // even if printing throws
         setColumnModel(oldColumnModel);
         setGridColor(oldGridColor);
+        //      return pageExists; REMOVED
       }
     } else {
       // Print synchronously table in Event Dispatch Thread
